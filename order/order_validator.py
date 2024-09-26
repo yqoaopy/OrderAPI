@@ -4,7 +4,7 @@ class ValidationError(Exception):
         self.message = message
         
 class OrderValidator:
-    def validate(self, order: dict) -> bool:
+    def validate(self, order: dict):
           
         # check filed "name" contains non-English characters
         if not order["name"].isalpha():
