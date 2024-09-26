@@ -14,7 +14,7 @@ def create_order():
         is_valid = validator.validate(data)
         if is_valid:
             converter = OrderConverter()
-            data = converter.convertet(data)
+            data = converter.convert(data)
          
     except ValidationError as e:
         return jsonify({'error': str(e.message)}), e.status_code  
