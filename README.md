@@ -38,3 +38,25 @@
 #### 5. 依賴反轉原則 D
 
   - `OrderValidator` 和 `OrderConverter` 依賴於 `ValidationStrategy` 和 `ConversionStrategy` 的抽象接口，而不是具體的實作類別。這樣可以隨意替換策略，保持高層模組與具體實作的解耦。
+
+## Installation & Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yqooopy/OrderAPI.git
+   cd your-repo-directory
+
+2. install package
+   ```bash
+    pip install -r requirements.txt
+   
+3. run service
+   ```bash
+    python app.py
+
+4. (Optional) Use Docker:
+   ```bash
+    docker build -t order-api .
+
+    docker run -p 5000:5000 order-api
+    or run in background 
+    docker run -d -p 5000:5000 order-api
