@@ -1,5 +1,6 @@
 import pytest
 from order.order_validator import OrderValidator, ValidationError
+from order.val_strategies import NameValidationStrategy, PriceValidationStrategy, CurrencyValidationStrategy
 
 def create_order(name_value="Leo", price_value="1000", currency="TWD"):
     return {
@@ -21,13 +22,15 @@ def create_order(name_value="Leo", price_value="1000", currency="TWD"):
     ("Melody", "2000", "TWD"),
 ])
 def test_validate_success(name_value, price_value, currency):
-    validator = OrderValidator()
+    strategies = [NameValidationStrategy(), PriceValidationStrategy(), CurrencyValidationStrategy()]
+    validator = OrderValidator(strategies)
     order = create_order(name_value, price_value, currency)
     assert validator.validate(order) == True    
 
 # name contains non-English char
 def test_validate_name_invalid():
-    validator = OrderValidator()
+    strategies = [NameValidationStrategy()]
+    validator = OrderValidator(strategies)
     order = create_order(name_value="Melody GG")
 
     with pytest.raises(ValidationError) as exc_info:
@@ -37,7 +40,8 @@ def test_validate_name_invalid():
 
 # name first char is not upper
 def test_validate_name_first_char_invalid():
-    validator = OrderValidator()
+    strategies = [NameValidationStrategy()]
+    validator = OrderValidator(strategies)
     order = create_order(name_value="melody")
     with pytest.raises(ValidationError) as exc_info:
         validator.validate(order)
@@ -46,7 +50,8 @@ def test_validate_name_first_char_invalid():
 
 # price more than 2000
 def test_validate_price_invalid():
-    validator = OrderValidator()
+    strategies = [PriceValidationStrategy()]
+    validator = OrderValidator(strategies)
     order = create_order(price_value=5000)
     with pytest.raises(ValidationError) as exc_info:
         validator.validate(order)
@@ -55,7 +60,8 @@ def test_validate_price_invalid():
 
 # currency is not (TWD or USD)
 def test_validate_currency_invalid():
-    validator = OrderValidator()
+    strategies = [CurrencyValidationStrategy()]
+    validator = OrderValidator(strategies)
     order = create_order(currency="RMB")
     with pytest.raises(ValidationError) as exc_info:
         validator.validate(order)

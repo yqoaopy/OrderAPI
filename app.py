@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from order.order_validator import OrderValidator, ValidationError
+from order.val_strategies import NameValidationStrategy, PriceValidationStrategy, CurrencyValidationStrategy
 from order.order_converter import OrderConverter
 
 app = Flask(__name__)
@@ -10,7 +11,12 @@ def create_order():
 
         data = request.get_json()
 
-        validator = OrderValidator()
+        strategies = [
+            NameValidationStrategy(),
+            PriceValidationStrategy(),
+            CurrencyValidationStrategy()
+        ]
+        validator = OrderValidator(strategies)
         is_valid = validator.validate(data)
         if is_valid:
             converter = OrderConverter()
