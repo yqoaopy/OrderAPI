@@ -1,3 +1,6 @@
+## Introduction
+本專案提供一個用於驗證和轉換訂單格式的 API。該 API 基於自定義的驗證策略來驗證訂單，並執行美元（USD）與新台幣（TWD）之間的貨幣轉換。
+
 ## 設計模式與SOLID原則
 
 ### 1. 策略模式
@@ -60,3 +63,10 @@
     docker run -p 5000:5000 order-api
     or run in background 
     docker run -d -p 5000:5000 order-api
+
+## 單元測試（Testing）：   
+
+To run the unit tests, use the following command:
+```bash
+pytest
+
