@@ -35,4 +35,4 @@ def create_order():
     return jsonify(data), 200  # 返回成功狀態碼
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=5000, debug=True)
