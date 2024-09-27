@@ -1,6 +1,13 @@
 ## Introduction
 本專案提供一個用於驗證和轉換訂單格式的 API。該 API 基於自定義的驗證策略來驗證訂單，並執行美元（USD）與新台幣（TWD）之間的貨幣轉換。
 
+## Tech Stack
+- Python
+- Flask 3.0.3
+- pytest 8.3.3
+- Docker
+
+
 ## 設計模式與SOLID原則
 
 ### 1. 策略模式
