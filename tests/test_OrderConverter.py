@@ -1,5 +1,6 @@
 import pytest
 from order.order_converter import OrderConverter
+from order.covert_strategies import USDToTWDConversionStrategy, NoConversionStrategy
 
 def create_order(price_value="1000", currency="TWD"):
     return {
@@ -22,7 +23,11 @@ def create_order(price_value="1000", currency="TWD"):
 ])
 def test_convert_price(price_value, currency, expected):
     order = create_order(price_value, currency)
-    converter = OrderConverter()
+    # 根據幣值選擇 策略
+    if currency == "USD":
+        converter = OrderConverter(USDToTWDConversionStrategy())
+    else:
+        converter = OrderConverter(NoConversionStrategy())
     result = converter.convert(order)
     assert result["price"] == expected
 if __name__ == '__main__':

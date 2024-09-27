@@ -1,6 +1,6 @@
 import pytest
 from order.order_validator import OrderValidator, ValidationError
-from order.val_strategies import NameValidationStrategy, PriceValidationStrategy, CurrencyValidationStrategy
+from order.val_strategies import OrderFieldValidationStrategy, NameValidationStrategy, PriceValidationStrategy, CurrencyValidationStrategy
 
 def create_order(name_value="Leo", price_value="1000", currency="TWD"):
     return {
@@ -15,6 +15,48 @@ def create_order(name_value="Leo", price_value="1000", currency="TWD"):
         "currency": currency
     }
 
+
+
+@pytest.mark.parametrize("missing_field", [
+    "name",
+    "id",
+    "address",
+    "price",
+    "currency",
+])
+def test_validate_required_fields(missing_field):
+    strategies = [OrderFieldValidationStrategy()]
+    validator = OrderValidator(strategies)
+    order = create_order()
+
+    # 刪除缺少的欄位
+    order.pop(missing_field)
+
+    with pytest.raises(ValidationError) as exc_info:
+        validator.validate(order)
+
+    assert exc_info.value.status_code == 400
+    assert exc_info.value.message == f'Missing field: {missing_field}'
+
+@pytest.mark.parametrize("field, invalid_value", [
+    ("id", 123),            # id 應為字串，但提供了整數
+    ("name", 456),          # name 應為字串，但提供了整數
+    ("currency", 789),      # currency 應為字串，但提供了整數
+])
+def test_validate_value_type(field, invalid_value):
+    strategies = [OrderFieldValidationStrategy()]
+    validator = OrderValidator(strategies)
+    order = create_order()
+
+    # 修改無效的欄位值
+    order[field] = invalid_value
+
+    with pytest.raises(ValidationError) as exc_info:
+        validator.validate(order)
+
+    assert exc_info.value.status_code == 400
+    assert exc_info.value.message == f"{field.capitalize()} must be a string."
+
 # check validate success
 @pytest.mark.parametrize("name_value, price_value, currency", [
     ("Melody", "1000", "TWD"),
@@ -22,7 +64,7 @@ def create_order(name_value="Leo", price_value="1000", currency="TWD"):
     ("Melody", "2000", "TWD"),
 ])
 def test_validate_success(name_value, price_value, currency):
-    strategies = [NameValidationStrategy(), PriceValidationStrategy(), CurrencyValidationStrategy()]
+    strategies = [OrderFieldValidationStrategy(), NameValidationStrategy(), PriceValidationStrategy(), CurrencyValidationStrategy()]
     validator = OrderValidator(strategies)
     order = create_order(name_value, price_value, currency)
     assert validator.validate(order) == True    
