@@ -14,17 +14,21 @@ def create_order():
         Val_strategies = [
             OrderFieldValidationStrategy(),
             NameValidationStrategy(),
-            PriceValidationStrategy(),
             CurrencyValidationStrategy()
         ]
         validator = OrderValidator(Val_strategies)
         is_valid = validator.validate(data)
         if is_valid:
+            # 根據幣值決定採用何種轉換策略
             if data["currency"] == "USD":
                 converter = OrderConverter(USDToTWDConversionStrategy())
             else:
                 converter = OrderConverter(NoConversionStrategy())
             data = converter.convert(data)
+
+            # 在轉換後進行價格驗證 base on TWD
+            price_validator = PriceValidationStrategy()
+            price_validator.validate(data)
             
          
     except ValidationError as e:
