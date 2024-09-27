@@ -19,11 +19,13 @@ def create_order():
         validator = OrderValidator(Val_strategies)
         is_valid = validator.validate(data)
         if is_valid:
+            strategy_map = {
+                "USD": USDToTWDConversionStrategy(),
+                "TWD": NoConversionStrategy(),
+            }
             # 根據幣值決定採用何種轉換策略
-            if data["currency"] == "USD":
-                converter = OrderConverter(USDToTWDConversionStrategy())
-            else:
-                converter = OrderConverter(NoConversionStrategy())
+            strategy = strategy_map.get(data["currency"], NoConversionStrategy())
+            converter = OrderConverter(strategy)            
             data = converter.convert(data)
 
             # 在轉換後進行價格驗證 base on TWD
